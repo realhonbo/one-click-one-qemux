@@ -1,53 +1,14 @@
 #!/bin/bash
 
-echo '=========== UBUNTU SOFTWARE SOURCE CHANGING ============>'
-
-read -p "请选择更新到清华源 [y/n]" input
-case $input in
-        [yY]* | "")
-                source /etc/os-release
-                case $VERSION_ID in
-                        "18.04")
-                                sudo rm /etc/apt/sources.list
-                                sudo cp 18_sources.list /etc/apt/
-                                sudo mv /etc/apt/18_sources.list /etc/apt/sources.list
-                                ;;
-                        "20.04")
-                                sudo rm /etc/apt/sources.list
-                                sudo cp 20_sources.list /etc/apt/
-                                sudo mv /etc/apt/20_sources.list /etc/apt/sources.list
-                                ;;
-                        "22.04")
-                                sudo rm /etc/apt/sources.list
-                                sudo cp 22_sources.list /etc/apt/
-                                sudo mv /etc/apt/22_sources.list /etc/apt/sources.list
-                                ;;
-                        *)
-                                echo " 您的linux不是预期版本, 请使用ubuntu 18.04 ~ 22.04"
-                                exit
-                                ;;
-                esac
-                ;;
-        [nN]* | *)
-                echo '未选择更新到清华源 !'
-                ;;        
-esac
-
-sudo apt update
-sudo apt upgrade
-
-
 echo '=========== COMPILE ENVIRONMENT INITALIZING ============>'
 
 # build 环境
 echo yes | sudo apt install build-essential
 echo yes | sudo apt install cmake
 echo yes | sudo apt install gdb
-echo yes | sudo apt install lldb
 echo yes | sudo apt install clang
 echo yes | sudo apt install clangd
 echo yes | sudo apt install clang-tidy
-echo yes | sudo apt install gcc-arm-none-eabi
 echo yes | sudo apt install gcc-arm-linux-gnueabihf
 echo yes | sudo apt install gcc-arm-linux-gnueabi
 echo yes | sudo apt install gcc-aarch64-linux-gnu
@@ -59,18 +20,6 @@ echo yes | sudo apt install net-tools
 echo yes | sudo apt install xinetd
 echo yes | sudo apt install tftp tftp-hpa tftpd-hpa
 echo yes | sudo apt install dwarves
-
-#python环境
-read -p "python : 是否更新到3.11版 [y/n]" input
-case $input in
-        [yY]* | "")
-                sudo add-apt-repository ppa:deadsnakes/ppa
-                echo yes | sudo apt install python3.11
-                ;;
-        [nN]* | *)
-                echo '未选择更新到3.11'
-                ;;
-esac
 
 # QEMU 环境
 echo yes | sudo apt install libsdl1.2-dev libsdl2-dev # qemu配置需要
@@ -119,11 +68,11 @@ sed -i '370a ARCH ?= arm\n CROSS_COMPILE = arm-linux-gnueabi-' Makefile # 注意
 
 make vexpress_defconfig
 
-# 依据核心数调配编译线程, 默认4核8线程
-make zImage  -j8
-make modules -j8
-make dtbs    -j8
-make LOADADDR=0x60003000 uImage  -j8
+# 依据核心数调配编译线程, 默认12 线程
+make zImage  -j12
+make modules -j12
+make dtbs    -j12
+make LOADADDR=0x60003000 uImage  -j12
 
 cp arch/arm/boot/zImage /home/qemux/
 cp arch/arm/boot/uImage /home/qemux/

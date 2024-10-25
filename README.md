@@ -13,11 +13,9 @@ One-click configuration of a new qemu experimental environment
 <br>
 
 ```
-git clone git@github.com:realHarvey/one-click-one-qemux.git
+git clone git@github.com:realhonbo/one-click-one-qemux.git
 
-cd one-click-one-qemux
-
-chmod 777 qemux_inital.sh
+cd one-click-one-qemux && chmod 777 qemux_inital.sh
 
 ./qemux_inital.sh
 ```
